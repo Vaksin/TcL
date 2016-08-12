@@ -1,11 +1,11 @@
-################################################
+#######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
 #												Version 1.0																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
-################################################
+#######################################################
 #																																	#
 # ############																									#
 # REQUIREMENTS																									#
@@ -14,7 +14,7 @@
 #																																	#
 # #######																												#
 # FEATURE																												#
-# #######																												#
+########																												#
 # -Download music (mp3) and video (mp4)														#
 # -Enable or Disable the script																				#
 # -Check mp3 or mp4 file in folder																		#
@@ -180,10 +180,10 @@ proc pub_getlink {nick host hand chan text } {
 proc help {nick host hand chan args} {
 	if {[channel get $chan mp3]} {
 	puthelp "PRIVMSG $nick :Mp3 Commands:"
-	puthelp "PRIVMSG $nick :\002.mp3 <title + singer>\002 | Exp: .mp3 stoney - lobo\002"
+	puthelp "PRIVMSG $nick :\002.mp3 <title + singer>\002 | Exp: .mp3 stoney - lobo"
 	puthelp "PRIVMSG $nick :\002.mp3 <link>\002 | Exp: .mp3 https://www.youtube.com/watch?v=2y-aB3VAaB8"
 	puthelp "PRIVMSG $nick :Mp4 Commands"
-	puthelp "PRIVMSG.$nick :\002.mp4 <title>\002 | Exp: .mp4 cinderella\002"
+	puthelp "PRIVMSG.$nick :\002.mp4 <title>\002 | Exp: .mp4 cinderella"
 	puthelp "PRIVMSG $nick :\002.mp4 <link>\002 | Exp: .mp4 https://www.youtube.com/watch?v=2y-aB3VAaB8"
 	puthelp "PRIVMSG $nick :-"
 	puthelp "PRIVMSG $nick :Commands for OP and Owner:"
@@ -196,12 +196,14 @@ proc help {nick host hand chan args} {
 proc delete_file {nick host hand chan text} {
 	global botnick path
 	if {[isop $nick $chan]==1 || [matchattr $nick n]} {
-		catch [list exec ~/eggdrop/vaksin.sh] vakz
-		if {[string match *empty* [string tolower $vakz]]} {
-			puthelp "PRIVMSG $chan :Folder is empty."
+		catch [list exec ~/eggdrop/a.sh] vakz
+		if {[string match *kosong* [string tolower $vakz]]} {
+			puthelp "PRIVMSG $chan :Folder kosong."
 		} else {
-			puthelp "PRIVMSG $chan :All files has been deleted."
+			puthelp "PRIVMSG $chan :Semua file telah di hapus."
 		}
+	} else {
+		puthelp "NOTICE $nick :Access Denied"
 	}
 }
 
