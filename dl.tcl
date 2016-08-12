@@ -1,11 +1,11 @@
-#######################################################
+################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
 #												Version 1.0																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
-#######################################################
+################################################
 #																																	#
 # ############																									#
 # REQUIREMENTS																									#
@@ -14,7 +14,7 @@
 #																																	#
 # #######																												#
 # FEATURE																												#
-########																												#
+# #######																												#
 # -Download music (mp3) and video (mp4)														#
 # -Enable or Disable the script																				#
 # -Check mp3 or mp4 file in folder																		#
