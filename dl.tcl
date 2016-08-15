@@ -1,7 +1,7 @@
 #######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
-#												Version 1.1																#
+#												Version 1.0																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
@@ -42,7 +42,7 @@ set tube(rest) 50
 set linkdl "http://your.link/~user/"
 
 # This is your public_html folder patch
-set path "/home/vaksin/public_html"
+set path "/home/vaksin"
 
 ###############################################################################
 ### End of Settings ###
@@ -83,7 +83,7 @@ proc pub_gett {nick host hand chan text } {
    catch [list exec youtube-dl --get-title "ytsearch1:$text"] judul
    catch [list exec youtube-dl --get-duration "ytsearch1:$text"] durasi
    regsub -all " " $judul "_" judulbaru
-   catch [list exec youtube-dl "ytsearch1:$text"  --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/$judulbaru.%(ext)s"] runcmdd
+   catch [list exec youtube-dl "ytsearch1:$text"  --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/public_html/$judulbaru.%(ext)s"] runcmdd
    set f [open "a.txt" a+]
    puts $f $runcmdd
    close $f
@@ -91,12 +91,16 @@ proc pub_gett {nick host hand chan text } {
    while { [gets $fp line] >= 0 } {
        if {[string match *ERROR:* $line]} {
            puthelp "PRIVMSG $chan :$line"
+           exec rm -f $path/eggdrop/a.txt
+           return 0
        }
     }
     close $fp
-   set files [glob "$path/$judulbaru.mp4"]
-   set ukuran [file size "$files"]
-   set besar [fixform $ukuran]
+    if {[file exists "$path/public_html/$judulbaru.mp4"]} {
+        set files [glob "$path/public_html/$judulbaru.mp4"]
+        set ukuran [file size "$files"]
+        set besar [fixform $ukuran]
+   }
    puthelp "PRIVMSG $chan :Download Link: $linkdl$judulbaru.mp4 \[Size: \002$besar\002\] \[Duration: \002$durasi menit\002\]"
    puthelp "PRIVMSG $chan :You have 10 minutes for download"
    timer 10 [list apus $chan $judulbaru]
@@ -108,7 +112,7 @@ proc pub_getlinkk {nick host hand chan text } {
    catch [list exec youtube-dl --get-title "$text"] judul
    catch [list exec youtube-dl --get-duration "$text"] durasi
    regsub -all " " $judul "_" judulbaru
-   catch [list exec youtube-dl --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/$judulbaru.%(ext)s" $text] runcmdd
+   catch [list exec youtube-dl --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/public_html/$judulbaru.%(ext)s" $text] runcmdd
    set f [open "a.txt" a+]
    puts $f $runcmdd
    close $f
@@ -116,12 +120,16 @@ proc pub_getlinkk {nick host hand chan text } {
    while { [gets $fp line] >= 0 } {
        if {[string match *ERROR:* $line]} {
            puthelp "PRIVMSG $chan :$line"
+           exec rm -f $path/eggdrop/a.txt
+           return 0
        }
     }
     close $fp
-   set files [glob "$path/$judulbaru.mp4"]
-   set ukuran [file size "$files"]
-   set besar [fixform $ukuran]
+    if {[file exists "$path/public_html/$judulbaru.mp4"]} {
+        set files [glob "$path/public_html/$judulbaru.mp4"]
+        set ukuran [file size "$files"]
+        set besar [fixform $ukuran]
+   }
    puthelp "PRIVMSG $chan :Download Link: $linkdl$judulbaru.mp4 \[Size: \002$besar\002\] \[Duration: \002$durasi menit\002\]"
    puthelp "PRIVMSG $chan :You have 10 minutes for download"
    timer 10 [list apus $chan $judulbaru]
@@ -156,7 +164,7 @@ proc pub_get {nick host hand chan text } {
 	set judul [lrange $text 0 end]
    catch [list exec youtube-dl --get-duration "ytsearch1:$text"] durasi
    regsub -all " " $judul "_" judulbaru
-   catch [list exec youtube-dl "ytsearch1:$text" -x --audio-format mp3 --audio-quality 0 --output "$path/$judulbaru.%(ext)s"] runcmd
+   catch [list exec youtube-dl "ytsearch1:$text" -x --audio-format mp3 --audio-quality 0 --output "$path/public_html/$judulbaru.%(ext)s"] runcmd
    set f [open "a.txt" a+]
    puts $f $runcmd
    close $f
@@ -164,12 +172,16 @@ proc pub_get {nick host hand chan text } {
    while { [gets $fp line] >= 0 } {
        if {[string match *ERROR:* $line]} {
            puthelp "PRIVMSG $chan :$line"
+           exec rm -f $path/eggdrop/a.txt
+           return 0
        }
     }
     close $fp
-   set files [glob "$path/$judulbaru.mp3"]
-   set ukuran [file size "$files"]
-   set besar [fixform $ukuran]
+    if {[file exists "$path/public_html/$judulbaru.mp3"]} {
+        set files [glob "$path/public_html/$judulbaru.mp3"]
+        set ukuran [file size "$files"]
+        set besar [fixform $ukuran]
+   }
    puthelp "PRIVMSG $chan :Download Link: $linkdl$judulbaru.mp3 \[Size: \002$besar\002\] \[Duration: \002$durasi menit\002\]"
    puthelp "PRIVMSG $chan :You have 10 minutes for download"
    timer 10 [list hapus $chan $judulbaru]
@@ -181,7 +193,7 @@ proc pub_getlink {nick host hand chan text } {
    catch [list exec youtube-dl --get-title "$text"] judul
    catch [list exec youtube-dl --get-duration "$text"] durasi
    regsub -all " " $judul "_" judulbaru
-   catch [list exec youtube-dl -x --audio-format mp3 --audio-quality 0 --output "$path/$judulbaru.%(ext)s" $text] runcmd
+   catch [list exec youtube-dl -x --audio-format mp3 --audio-quality 0 --output "$path/public_html/$judulbaru.%(ext)s" $text] runcmd
    set f [open "a.txt" a+]
    puts $f $runcmd
    close $f
@@ -189,12 +201,16 @@ proc pub_getlink {nick host hand chan text } {
    while { [gets $fp line] >= 0 } {
        if {[string match *ERROR:* $line]} {
            puthelp "PRIVMSG $chan :$line"
+           exec rm -f $path/eggdrop/a.txt
+           return 0
        }
     }
     close $fp
-   set files [glob "$path/$judulbaru.mp3"]
-   set ukuran [file size "$files"]
-   set besar [fixform $ukuran]
+    if {[file exists "$path/public_html/$judulbaru.mp3"]} {
+        set files [glob "$path/public_html/$judulbaru.mp3"]
+        set ukuran [file size "$files"]
+        set besar [fixform $ukuran]
+   }
    puthelp "PRIVMSG $chan :Download Link: $linkdl$judulbaru.mp3 \[Size: \002$besar\002\] \[Duration: \002$durasi menit\002\]"
    puthelp "PRIVMSG $chan :You have 10 minutes for download"
    timer 10 [list hapus $chan $judulbaru]
@@ -218,9 +234,8 @@ proc help {nick host hand chan args} {
 }
 
 proc delete_file {nick host hand chan text} {
-	global botnick path
 	if {[isop $nick $chan]==1 || [matchattr $nick n]} {
-		catch [list exec ~/eggdrop/a.sh] vakz
+		catch [list exec ~/eggdrop/vaksin.sh] vakz
 		if {[string match *kosong* [string tolower $vakz]]} {
 			puthelp "PRIVMSG $chan :Folder kosong."
 		} else {
@@ -233,15 +248,15 @@ proc delete_file {nick host hand chan text} {
 
 proc apus {chan judulbaru} {
 	global path
-	if {[file exists $path/$judulbaru.mp4] == 1} {
-		exec rm -f $path/$judulbaru.mp4
+	if {[file exists $path/public_html/$judulbaru.mp4] == 1} {
+		exec rm -f $path/public_html/$judulbaru.mp4
 		puthelp "PRIVMSG $chan :File $judulbaru.mp4 has been deleted."
 	}
 }
 proc hapus {chan judulbaru} {
 	global path
-	if {[file exists $path/$judulbaru.mp3] == 1} {
-		exec rm -f $path/$judulbaru.mp3
+	if {[file exists $path/public_html/$judulbaru.mp3] == 1} {
+		exec rm -f $path/public_html/$judulbaru.mp3
 		puthelp "PRIVMSG $chan :File $judulbaru.mp3 has been deleted."
 	}
 }
@@ -271,7 +286,7 @@ proc pub:close {nick uhost hand chan arg} {
 bind pub n "cek" cekfolder
 proc cekfolder {nick uhost hand chan arg} {
 	global path
-	set isi [glob -nocomplain [file join $path *]]
+	set isi [glob -nocomplain [file join $path/public_html/ *]]
 	if {[llength $isi] != 0} {
 		puthelp "PRIVMSG $chan :There is [llength $isi] files in folder"
 	} else {
