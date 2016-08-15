@@ -1,7 +1,7 @@
 #######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
-#												Version 1.0																#
+#												Version 1.1																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
