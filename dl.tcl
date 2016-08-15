@@ -84,10 +84,16 @@ proc pub_gett {nick host hand chan text } {
    catch [list exec youtube-dl --get-duration "ytsearch1:$text"] durasi
    regsub -all " " $judul "_" judulbaru
    catch [list exec youtube-dl "ytsearch1:$text"  --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/$judulbaru.%(ext)s"] runcmdd
-   if {[string match *error* [string tolower $runcmdd]]} {
-       putserv "PRIVMSG $chan :ERROR. Couldn't download this file."
-       return 0
-   }
+   set f [open "a.txt" a+]
+   puts $f $runcmdd
+   close $f
+   set fp [open "a.txt" r]
+   while { [gets $fp line] >= 0 } {
+       if {[string match *ERROR:* $line]} {
+           puthelp "PRIVMSG $chan :$line"
+       }
+    }
+    close $fp
    set files [glob "$path/$judulbaru.mp4"]
    set ukuran [file size "$files"]
    set besar [fixform $ukuran]
@@ -103,10 +109,16 @@ proc pub_getlinkk {nick host hand chan text } {
    catch [list exec youtube-dl --get-duration "$text"] durasi
    regsub -all " " $judul "_" judulbaru
    catch [list exec youtube-dl --no-playlist --youtube-skip-dash-manifest -f mp4 --output "$path/$judulbaru.%(ext)s" $text] runcmdd
-   if {[string match *error* [string tolower $runcmdd]]} {
-       putserv "PRIVMSG $chan :ERROR. Couldn't download this file."
-       return 0
-   }
+   set f [open "a.txt" a+]
+   puts $f $runcmdd
+   close $f
+   set fp [open "a.txt" r]
+   while { [gets $fp line] >= 0 } {
+       if {[string match *ERROR:* $line]} {
+           puthelp "PRIVMSG $chan :$line"
+       }
+    }
+    close $fp
    set files [glob "$path/$judulbaru.mp4"]
    set ukuran [file size "$files"]
    set besar [fixform $ukuran]
@@ -145,10 +157,16 @@ proc pub_get {nick host hand chan text } {
    catch [list exec youtube-dl --get-duration "ytsearch1:$text"] durasi
    regsub -all " " $judul "_" judulbaru
    catch [list exec youtube-dl "ytsearch1:$text" -x --audio-format mp3 --audio-quality 0 --output "$path/$judulbaru.%(ext)s"] runcmd
-   if {[string match *error* [string tolower $runcmd]]} {
-       putserv "PRIVMSG $chan :ERROR. Couldn't download this file."
-       return 0
-   }
+   set f [open "a.txt" a+]
+   puts $f $runcmd
+   close $f
+   set fp [open "a.txt" r]
+   while { [gets $fp line] >= 0 } {
+       if {[string match *ERROR:* $line]} {
+           puthelp "PRIVMSG $chan :$line"
+       }
+    }
+    close $fp
    set files [glob "$path/$judulbaru.mp3"]
    set ukuran [file size "$files"]
    set besar [fixform $ukuran]
@@ -164,10 +182,16 @@ proc pub_getlink {nick host hand chan text } {
    catch [list exec youtube-dl --get-duration "$text"] durasi
    regsub -all " " $judul "_" judulbaru
    catch [list exec youtube-dl -x --audio-format mp3 --audio-quality 0 --output "$path/$judulbaru.%(ext)s" $text] runcmd
-   if {[string match *error* [string tolower $runcmd]]} {
-       putserv "PRIVMSG $chan :ERROR. Couldn't download this file."
-       return 0
-   }
+   set f [open "a.txt" a+]
+   puts $f $runcmd
+   close $f
+   set fp [open "a.txt" r]
+   while { [gets $fp line] >= 0 } {
+       if {[string match *ERROR:* $line]} {
+           puthelp "PRIVMSG $chan :$line"
+       }
+    }
+    close $fp
    set files [glob "$path/$judulbaru.mp3"]
    set ukuran [file size "$files"]
    set besar [fixform $ukuran]
