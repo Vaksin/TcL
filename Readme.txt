@@ -8,7 +8,7 @@ Change the "/home/vaksin/public_html/" with your patch.
 
 2. Edit dl.tcl file. Change this:
 set linkdl "http://your.link/~user"
-set path "/home/vaksin/public_html"
+set path "/home/vaksin"
 
 3. Upload vaksin.sh to your eggdrop folder. (/home/user/eggdrop/here)
 And set permission to 755 ---> Type: chmod 755 vaksin.sh
