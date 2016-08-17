@@ -1,7 +1,7 @@
 #######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
-#												Version 1.1																#
+#												Version 1.2																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
@@ -12,14 +12,21 @@
 # ############																									#
 #  "youtube-dl" and "ffmpeg" package installed.													#
 #																																	#
-# #######																												#
-# FEATURE																												#
-########																												#
-# -Download music (mp3) and video (mp4)														#
-# -Enable or Disable the script																				#
-# -Check mp3 or mp4 file in folder																		#
-# -Clear all file in folder.																							#
-#																																	#
+# ##########																										#
+# CHANGELOG																										#
+###########																										#
+# 1.0																															#
+# -Enable or Disable the script.			(For Op or Owner)									#
+# -Check mp3 or mp4 file in folder.	(For Op or Owner)									#
+# -Clear all file in folder.						(For Op or Owner)									#
+# 1.1																															#
+# -Error message now with full reply.																	#
+# -Fixed some bugs.																								#
+# 1.2																															#
+# -Added block and unblock commands for owner.											#
+#  Examples: block donald		(Prevent donald for download)						#
+#					 unblock donald	(Remove block)												#
+#																																#
 # #######																												#
 # CONTACT																												#
 # #######																												#
@@ -50,10 +57,42 @@ set path "/home/vaksin"
 
 bind pub - .mp3 mptiga
 bind pub - .mp4 mpempat
-bind pub - clear delete_file 
+bind pub - clear delete_file
+bind pub - check cekfolder
 bind pub - .help help
 bind pub - open pub:open
 bind pub - close pub:close
+bind pub - blok blokk
+bind pub - unblok unblokk
+
+proc blokk { nick host hand chan text } {
+	if {[matchattr $nick n]} {
+		set tnick [lindex $text 0]
+		set hostmask [getchanhost $tnick $chan]
+		set hostmask "*!*@[lindex [split $hostmask @] 1]"
+		if {[isignore $hostmask]} {
+			puthlp "NOTICE $nick :$tnick is alreay set on ignore."
+			return 0
+		}
+	newignore $hostmask $hand "*" 0
+	puthelp "NOTICE $nick :Ignoring $tnick"
+	}
+}
+
+proc unblokk { nick host hand chan text } {
+	if {[matchattr $nick n]} {
+	set tnick [lindex $text 0]
+	set hostmask [getchanhost $tnick $chan]
+	set hostmask "*!*@[lindex [split $hostmask @] 1]"
+	if {![isignore $hostmask]} {
+		puthlp "NOTICE $nick :$tnick is not on ignore list."
+		return 0
+	}
+	killignore $hostmask
+	puthelp "NOTICE $nick :Unignoring $tnick"
+	saveuser
+	}
+}
 
 proc mpempat { nick host hand chan text } {
 	global tube
@@ -286,11 +325,13 @@ proc pub:close {nick uhost hand chan arg} {
 bind pub n "cek" cekfolder
 proc cekfolder {nick uhost hand chan arg} {
 	global path
-	set isi [glob -nocomplain [file join $path/public_html/ *]]
-	if {[llength $isi] != 0} {
-		puthelp "PRIVMSG $chan :There is [llength $isi] files in folder"
-	} else {
-		puthelp "PRIVMSG $chan :Folder is empty."
+	if {[isop $nick $chan]==1 || [matchattr $nick n]} {
+		set isi [glob -nocomplain [file join $path/public_html/ *]]
+		if {[llength $isi] != 0} {
+			puthelp "PRIVMSG $chan :There is [llength $isi] files in folder"
+		} else {
+			puthelp "PRIVMSG $chan :Folder is empty."
+		}
 	}
 }
 
