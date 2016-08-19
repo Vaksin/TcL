@@ -16,7 +16,7 @@
 # CHANGELOG																										#
 ###########																										#
 # 1.0																															#
-# -Enable or Disable the script.			(For or Owner)										#
+# -Enable or Disable the script.			(For Owner)										#
 # -Clear all file in folder.						(For Owner)											#
 # -Check mp3 or mp4 file in folder.	(For Op or Owner)									#
 # 1.1																															#
