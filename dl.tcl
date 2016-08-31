@@ -1,7 +1,7 @@
 #######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
-#												Version 1.3																#
+#												Version 1.2																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
@@ -15,8 +15,8 @@
 # ##########																										#
 # CHANGELOG																										#
 ###########																										#
-# 1.0																														  #
-# -Enable or Disable the script.			(For Owner)										   #
+# 1.0																															#
+# -Enable or Disable the script.			(For Owner)										#
 # -Clear all file in folder.						(For Owner)											#
 # -Check mp3 or mp4 file in folder.	(For Op or Owner)									#
 # 1.1																															#
@@ -24,11 +24,9 @@
 # -Fixed some bugs.																								#
 # 1.2																															#
 # -Added block and unblock commands for owner.											#
+#  Examples: block donald		(Prevent donald for download)						#
+#					 unblock donald	(Remove block)												#
 # -Fixed bug.																											#
-# 1.3																														 #
-# -Modified "On, Off, Block, Unblock commands.										 	#
-#  Now you can use <botnick command>														  #
-#  Example: "mp3 on" or 'mp3 block nick"													  	#
 #																																#
 # #######																												#
 # CONTACT																												#
@@ -65,6 +63,39 @@ bind pub - check cekfolder
 bind pub - .help help
 bind pub n "$botnick" pub:onoff
 
+proc blokk { nick host hand chan text } {
+	if {[matchattr $nick n]} {
+		set tnick [lindex $text 0]
+		set hostmask [getchanhost $tnick $chan]
+		set hostmask "*!*@[lindex [split $hostmask @] 1]"
+		if {[isignore $hostmask]} {
+			puthlp "NOTICE $nick :$tnick is alreay set on ignore."
+			return 0
+		}
+		newignore $hostmask $hand "*" 0
+		puthelp "NOTICE $nick :Ignoring $tnick"
+	} else {
+		putquick "NOTICE $nick :Access Denied!!!"
+	}
+}
+
+proc unblokk { nick host hand chan text } {
+	if {[matchattr $nick n]} {
+		set tnick [lindex $text 0]
+		set hostmask [getchanhost $tnick $chan]
+		set hostmask "*!*@[lindex [split $hostmask @] 1]"
+		if {![isignore $hostmask]} {
+			puthlp "NOTICE $nick :$tnick is not on ignore list."
+			return 0
+		}
+		killignore $hostmask
+		puthelp "NOTICE $nick :Unignoring $tnick"
+		saveuser
+	} else {
+		putquick "NOTICE $nick :Access Denied!!!"
+	}
+}
+
 proc mpempat { nick host hand chan text } {
 	global tube
 	if {![channel get $chan mp3]} { return 0 }
@@ -87,6 +118,7 @@ proc mpempat { nick host hand chan text } {
         pub_gett $nick $host $hand $chan $text
     }
 }
+
 proc pub_gett {nick host hand chan text } {
 	global path linkdl
 	putquick "PRIVMSG $chan :Mohon tunggu..."
@@ -113,6 +145,7 @@ proc pub_gett {nick host hand chan text } {
    timer 5 [list apus $chan $judulbaru]
    return 0
 }
+
 proc pub_getlinkk {nick host hand chan text } {
 	global path linkdl
 	putquick "PRIVMSG $chan :Mohon tunggu..."
@@ -227,8 +260,8 @@ proc help {nick host hand chan args} {
 	puthelp "PRIVMSG $nick :\002cek\002 | Cek file di folder."
 	puthelp "PRIVMSG $nick :-"
 	puthelp "PRIVMSG $nick :Perintah untuk Owner:"
-	puthelp "PRIVMSG $nick :\002open\002 | Enable the downloader."
-	puthelp "PRIVMSG $nick :\002close\002 | Disable the downloader."
+	puthelp "PRIVMSG $nick :\002<botnick on/off>\002 | Enable/Disable the downloader."
+	puthelp "PRIVMSG $nick :\002<botnick block/unblock nick>\002 | Block/Unblock user."
 	puthelp "PRIVMSG $nick :\002clear\002 | Delete file in server."
  }
 }
@@ -308,6 +341,7 @@ proc pub:onoff {nick uhost hand chan arg} {
 		}
 	}
 }
+
 proc cekfolder {nick uhost hand chan arg} {
 	global path
 	if {[isop $nick $chan]==1 || [matchattr $nick n]} {
@@ -323,6 +357,7 @@ proc cekfolder {nick uhost hand chan arg} {
 		putquick "NOTICE $nick :Access Denied!!!"
 	}
 }
+
 proc fixform n {
     if {wide($n) < 1000} {return $n}
     foreach unit {KB MB GB TB P E} {
