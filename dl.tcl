@@ -1,7 +1,7 @@
 #######################################################
 #																																	#
 #									Mp3 and Mp4 Downloader												#
-#												Version 1.2																#
+#												Version 1.3																#
 #																																	#
 # Author: Vaksin																										#
 # Copyright © 2016 All Rights Reserved.																#
@@ -15,18 +15,20 @@
 # ##########																										#
 # CHANGELOG																										#
 ###########																										#
-# 1.0																															#
-# -Enable or Disable the script.			(For Owner)										#
+# 1.0																														  #
+# -Enable or Disable the script.			(For Owner)										   #
 # -Clear all file in folder.						(For Owner)											#
-# -Check mp3 or mp4 file in folder.	(For Op or Owner)									#
+# -Check mp3 or mp4 file in folder.	 (For Owner)							        		#
 # 1.1																															#
 # -Error message now with full reply.																	#
 # -Fixed some bugs.																								#
 # 1.2																															#
 # -Added block and unblock commands for owner.											#
-#  Examples: block donald		(Prevent donald for download)						#
-#					 unblock donald	(Remove block)												#
 # -Fixed bug.																											#
+# 1.3																														 #
+# -Modified commands. Now you can use <botnick command>					#
+#  Example: "mp3 on" or 'mp3 block nick"														  #
+#  (Please see bot help. Type .help in channel.)												#
 #																																#
 # #######																												#
 # CONTACT																												#
@@ -59,42 +61,8 @@ set path "/home/vaksin"
 bind pub - .mp3 mptiga
 bind pub - .mp4 mpempat
 bind pub - clear delete_file
-bind pub - check cekfolder
 bind pub - .help help
-bind pub n "$botnick" pub:onoff
-
-proc blokk { nick host hand chan text } {
-	if {[matchattr $nick n]} {
-		set tnick [lindex $text 0]
-		set hostmask [getchanhost $tnick $chan]
-		set hostmask "*!*@[lindex [split $hostmask @] 1]"
-		if {[isignore $hostmask]} {
-			puthlp "NOTICE $nick :$tnick is alreay set on ignore."
-			return 0
-		}
-		newignore $hostmask $hand "*" 0
-		puthelp "NOTICE $nick :Ignoring $tnick"
-	} else {
-		putquick "NOTICE $nick :Access Denied!!!"
-	}
-}
-
-proc unblokk { nick host hand chan text } {
-	if {[matchattr $nick n]} {
-		set tnick [lindex $text 0]
-		set hostmask [getchanhost $tnick $chan]
-		set hostmask "*!*@[lindex [split $hostmask @] 1]"
-		if {![isignore $hostmask]} {
-			puthlp "NOTICE $nick :$tnick is not on ignore list."
-			return 0
-		}
-		killignore $hostmask
-		puthelp "NOTICE $nick :Unignoring $tnick"
-		saveuser
-	} else {
-		putquick "NOTICE $nick :Access Denied!!!"
-	}
-}
+bind pub - "$botnick" pub:onoff
 
 proc mpempat { nick host hand chan text } {
 	global tube
@@ -118,7 +86,6 @@ proc mpempat { nick host hand chan text } {
         pub_gett $nick $host $hand $chan $text
     }
 }
-
 proc pub_gett {nick host hand chan text } {
 	global path linkdl
 	putquick "PRIVMSG $chan :Mohon tunggu..."
@@ -145,7 +112,6 @@ proc pub_gett {nick host hand chan text } {
    timer 5 [list apus $chan $judulbaru]
    return 0
 }
-
 proc pub_getlinkk {nick host hand chan text } {
 	global path linkdl
 	putquick "PRIVMSG $chan :Mohon tunggu..."
@@ -249,20 +215,20 @@ proc pub_getylink {nick host hand chan text } {
 }
 proc help {nick host hand chan args} {
 	if {[channel get $chan mp3]} {
-	puthelp "PRIVMSG $nick :Perintah Mp3:"
+	puthelp "PRIVMSG $nick :Mp3 Commands:"
 	puthelp "PRIVMSG $nick :\002.mp3 <judul + penyanyi>\002 | Contoh: .mp3 mungkinkah stinky"
 	puthelp "PRIVMSG $nick :\002.mp3 <link>\002 | Contoh: .mp3 https://www.youtube.com/watch?v=2y-aB3VAaB8"
-	puthelp "PRIVMSG $nick :Perintah Mp4:"
+	puthelp "PRIVMSG $nick :Mp4 Commands:"
 	puthelp "PRIVMSG $nick :\002.mp4 <judul>\002 | Contoh: .mp4 cinderella"
 	puthelp "PRIVMSG $nick :\002.mp4 <link>\002 | Contoh: .mp3 https://www.youtube.com/watch?v=2y-aB3VAaB8"
 	puthelp "PRIVMSG $nick :-"
-	puthelp "PRIVMSG $nick :Perintah untuk OP:"
-	puthelp "PRIVMSG $nick :\002cek\002 | Cek file di folder."
-	puthelp "PRIVMSG $nick :-"
-	puthelp "PRIVMSG $nick :Perintah untuk Owner:"
-	puthelp "PRIVMSG $nick :\002<botnick on/off>\002 | Enable/Disable the downloader."
-	puthelp "PRIVMSG $nick :\002<botnick block/unblock nick>\002 | Block/Unblock user."
-	puthelp "PRIVMSG $nick :\002clear\002 | Delete file in server."
+	puthelp "PRIVMSG $nick :Owner Commands:"
+	puthelp "PRIVMSG $nick :\002clear\002 | Delete file di folder."
+	puthelp "PRIVMSG $nick :\002<botnick> check\002 | Check file di folder."
+	puthelp "PRIVMSG $nick :\002<botnick> on\002 | Enable bot."
+	puthelp "PRIVMSG $nick :\002<botnick> off\002 | Disable bot."
+	puthelp "PRIVMSG $nick :\002<botnick> block <nick>\002 | Block user."
+	puthelp "PRIVMSG $nick :\002<botnick> unblock <nick>\002 | Unblock user."
  }
 }
 proc delete_file {nick host hand chan text} {
@@ -294,6 +260,11 @@ proc hapus {chan judulbaru} {
 	}
 }
 proc pub:onoff {nick uhost hand chan arg} {
+	global path
+	if {![matchattr $nick n]} {
+		putquick "NOTICE $nick :Access Denied!!!"
+		return 0
+	}
 	switch [lindex $arg 0] {
 		"on" {
 			if {[channel get $chan mp3]} {
@@ -312,7 +283,7 @@ proc pub:onoff {nick uhost hand chan arg} {
 			channel set $chan -mp3
 			putquick "PRIVMSG $chan :- DISABLE -"
 		}
-		"blok" {
+		"block" {
 			set tnick [lindex $arg 1]
 			if {[matchattr $tnick n]} {
 				puthelp "NOTICE $nick :$tnick is my owner. -ABORTED-"
@@ -327,7 +298,7 @@ proc pub:onoff {nick uhost hand chan arg} {
 			newignore $hostmask $hand "*" 0
 			puthelp "NOTICE $nick :Ignoring $tnick"
 		}
-		"unblok" {
+		"unblock" {
 			set tnick [lindex $arg 1]
 			set hostmask [getchanhost $tnick $chan]
 			set hostmask "*!*@[lindex [split $hostmask @] 1]"
@@ -339,13 +310,7 @@ proc pub:onoff {nick uhost hand chan arg} {
 			puthelp "NOTICE $nick :Unignoring $tnick"
 			saveuser
 		}
-	}
-}
-
-proc cekfolder {nick uhost hand chan arg} {
-	global path
-	if {[isop $nick $chan]==1 || [matchattr $nick n]} {
-		if {[llength $arg] < 1} {
+		"check" {
 			set isi [glob -nocomplain [file join $path/public_html/ *]]
 			if {[llength $isi] != 0} {
 				puthelp "PRIVMSG $chan :Ada [llength $isi] files"
@@ -353,8 +318,6 @@ proc cekfolder {nick uhost hand chan arg} {
 				puthelp "PRIVMSG $chan :Folder kosong."
 			}
 		}
-	} else {
-		putquick "NOTICE $nick :Access Denied!!!"
 	}
 }
 
