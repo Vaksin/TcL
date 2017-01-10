@@ -17,7 +17,7 @@
 ##############################################################
 
 set ijootcl_setting(flag) ""
-set ijootcl_setting(web) "http://149.56.140.215/download/"
+set ijootcl_setting(web) "http://127.0.01.1/download/"
 set ijootcl_setting(path) "/usr/share/nginx/html/download/"
 set ijootcl_setting(auto_del) "1"
 set ijootcl_setting(time) "15"
